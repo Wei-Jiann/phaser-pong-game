@@ -18,6 +18,10 @@ export class Game extends Scene {
         this.rightScoreText = null;
         this.paddleSpeed = 5;
         this.trajectoryLine = null;
+        this.leftwin = null;
+        this.rightwin = null;
+        this.leftwincon = false;
+        this.rightwincon = false;
     }
 
     preload() {
@@ -54,9 +58,20 @@ export class Game extends Scene {
 
         // Create the graphics object for the trajectory line
         this.trajectoryLine = this.add.graphics();
+
+        // Create the win text
+        this.leftWin = this.add.text(WIDTH / 2, HEIGHT / 2, 'Left Wins!', { fontSize: '50px' }).setOrigin(0.5, 0.5);
+        this.leftWin.visible = false;
+        
+        this.rightWin = this.add.text(WIDTH / 2, HEIGHT / 2, 'Right Wins!', { fontSize: '50px' }).setOrigin(0.5, 0.5);
+        this.rightWin.visible = false;
     }
 
     update() {
+        if (this.leftwincon || this.rightwincon){
+            this.trajectoryLine.clear();
+            return;
+        }
         if (this.cursers.up.isDown && this.rightPaddle.y > 0) {
             this.rightPaddle.y -= this.paddleSpeed;
         } else if (this.cursers.down.isDown && this.rightPaddle.y < HEIGHT) {
@@ -73,11 +88,13 @@ export class Game extends Scene {
             this.rightScore += 1;
             this.rightScoreText.setText(this.rightScore);
             this.ball.setPosition(WIDTH / 2, HEIGHT / 2);
+            this.checkWinCon();
             this.resetBall();
         } else if (this.ball.x > WIDTH - margin) {
             this.leftScore += 1;
             this.leftScoreText.setText(this.leftScore);
             this.ball.setPosition(WIDTH / 2, HEIGHT / 2);
+            this.checkWinCon();
             this.resetBall();
         }
 
@@ -159,4 +176,19 @@ export class Game extends Scene {
     
         this.trajectoryLine.strokePath();
     }
+    checkWinCon (){
+        if (this.leftScore == 1){
+            this.leftwincon = true;
+            this.leftWin.visible = true;
+            this.ballMotion = false;
+            this.ball.visible = false;
+        }
+        if (this.rightScore == 1){
+            this.rightwincon = true;
+            this.rightWin.visible = true;
+            this.ballMotion = false
+            this.ball.visible = false;
+        }
+    }
+
 }
